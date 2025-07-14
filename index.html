@@ -22,13 +22,38 @@
     </div>
   </div>
   
+  
   <div id="images-container">
     <div id="original-section">
       <h3>📁 Original Images</h3>
-      <div id="queue-controls">
+      <div id="settings-section">
+        <h3>⚙️ Export Settings</h3>
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="use-custom-size" />
+            Use custom export size
+          </label>
+        </div>
+        <div class="setting-item" id="size-controls" style="display: none;">
+          <div class="size-input-group">
+            <label for="export-width">Width:</label>
+            <input type="number" id="export-width" value="1024" min="1" max="4096" />
+            <label for="export-height">Height:</label>
+            <input type="number" id="export-height" value="1024" min="1" max="4096" />
+          </div>
+          <div class="setting-item">
+            <label>
+              <input type="checkbox" id="lock-aspect-ratio" checked />
+              Lock aspect ratio
+            </label>
+          </div>
+        </div>
+        <div id="queue-controls">
         <button id="start-processing">Start Remove Background</button>
         <button id="clear-queue">Clear Queue</button>
       </div>
+      </div>
+      
       <div id="upload-section">
         <label id="upload-button" for="upload">
           <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -46,6 +71,7 @@
     
     <div id="processed-section">
       <h3>✨ Background Removed</h3>
+      
       <button id="download-all">Download All</button>
       <div id="processed-images" class="image-grid"></div>
     </div>

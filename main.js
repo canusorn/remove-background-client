@@ -21,6 +21,11 @@ const example = document.getElementById('example');
 const startProcessingBtn = document.getElementById('start-processing');
 const clearQueueBtn = document.getElementById('clear-queue');
 const downloadAllBtn = document.getElementById('download-all');
+const useCustomSizeCheckbox = document.getElementById('use-custom-size');
+const sizeControls = document.getElementById('size-controls');
+const exportWidthInput = document.getElementById('export-width');
+const exportHeightInput = document.getElementById('export-height');
+const lockAspectRatioCheckbox = document.getElementById('lock-aspect-ratio');
 
 // Queue management
 let imageQueue = [];
@@ -104,6 +109,34 @@ downloadAllBtn.addEventListener('click', () => {
     downloadAllProcessed();
 });
 
+// Resize settings event listeners
+useCustomSizeCheckbox.addEventListener('change', () => {
+    sizeControls.style.display = useCustomSizeCheckbox.checked ? 'block' : 'none';
+});
+
+// Aspect ratio locking
+let originalAspectRatio = 1;
+
+exportWidthInput.addEventListener('input', () => {
+    if (lockAspectRatioCheckbox.checked) {
+        const newHeight = Math.round(exportWidthInput.value / originalAspectRatio);
+        exportHeightInput.value = newHeight;
+    }
+});
+
+exportHeightInput.addEventListener('input', () => {
+    if (lockAspectRatioCheckbox.checked) {
+        const newWidth = Math.round(exportHeightInput.value * originalAspectRatio);
+        exportWidthInput.value = newWidth;
+    }
+});
+
+lockAspectRatioCheckbox.addEventListener('change', () => {
+    if (lockAspectRatioCheckbox.checked) {
+        originalAspectRatio = exportWidthInput.value / exportHeightInput.value;
+    }
+});
+
 // Queue management functions
 function addToQueue(imageData) {
     const queueItem = {
@@ -117,6 +150,11 @@ function addToQueue(imageData) {
 
     // Add to original images UI immediately
     addOriginalImageToResults(queueItem);
+    
+    // Update aspect ratio for resize controls if this is the first image
+    if (imageQueue.length === 1 && queueItem.url) {
+        updateAspectRatioFromImage(queueItem.url);
+    }
 
     updateQueueInfo();
 }
@@ -200,6 +238,35 @@ async function processQueue() {
     updateQueueInfo();
 }
 
+// Update aspect ratio from image
+function updateAspectRatioFromImage(imageUrl) {
+    const img = new Image();
+    img.onload = () => {
+        originalAspectRatio = img.width / img.height;
+        exportWidthInput.value = img.width;
+        exportHeightInput.value = img.height;
+    };
+    img.src = imageUrl;
+}
+
+// Resize canvas function
+function resizeCanvas(sourceCanvas, targetWidth, targetHeight) {
+    const resizedCanvas = document.createElement('canvas');
+    resizedCanvas.width = targetWidth;
+    resizedCanvas.height = targetHeight;
+    const ctx = resizedCanvas.getContext('2d');
+    
+    // Use high-quality image smoothing
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
+    // Draw the source canvas onto the resized canvas
+    ctx.drawImage(sourceCanvas, 0, 0, sourceCanvas.width, sourceCanvas.height, 
+                  0, 0, targetWidth, targetHeight);
+    
+    return resizedCanvas;
+}
+
 // Process a single image
 async function processImage(item) {
     status.textContent = `Processing ${item.name}... (${currentProcessingIndex})`;
@@ -232,12 +299,22 @@ async function processImage(item) {
     }
     ctx.putImageData(pixelData, 0, 0);
 
+    // Apply resize if custom size is enabled
+    const finalCanvas = useCustomSizeCheckbox.checked ? 
+        resizeCanvas(canvas, parseInt(exportWidthInput.value), parseInt(exportHeightInput.value)) : 
+        canvas;
+
     return {
         ...item,
         originalImage: image,
-        processedCanvas: canvas,
+        processedCanvas: finalCanvas,
         processedAt: new Date(),
-        dimensions: { width: image.width, height: image.height }
+        dimensions: { 
+            width: finalCanvas.width, 
+            height: finalCanvas.height,
+            originalWidth: image.width,
+            originalHeight: image.height
+        }
     };
 }
 
@@ -281,7 +358,10 @@ function addProcessedImageToResults(result) {
         </div>
         <div class="image-info">
             <div><strong>${result.name}</strong></div>
-            <div>${result.dimensions.width} × ${result.dimensions.height}</div>
+            <div>Export: ${result.dimensions.width} × ${result.dimensions.height}</div>
+            ${result.dimensions.originalWidth && result.dimensions.originalHeight && 
+              (result.dimensions.width !== result.dimensions.originalWidth || result.dimensions.height !== result.dimensions.originalHeight) ? 
+              `<div>Original: ${result.dimensions.originalWidth} × ${result.dimensions.originalHeight}</div>` : ''}
             <div>✅ Processed: ${result.processedAt.toLocaleTimeString()}</div>
         </div>
         <div class="image-actions">
