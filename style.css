@@ -2,19 +2,23 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 html,
 body {
-  height: 100%;
+  min-height: 100%;
+  background: #1a1a1a;
+  color: #e0e0e0;
 }
 
 body {
   padding: 16px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-body,
 #upload-section,
 #upload-button {
   display: flex;
@@ -26,50 +30,95 @@ body,
 h1,
 h4 {
   text-align: center;
+  color: #ffffff;
+}
+
+h1 a {
+  color: #9FA8DA;
+  text-decoration: none;
+}
+
+h1 a:hover {
+  color: #C5CAE9;
 }
 
 h4 {
   margin-top: 0.5rem;
+  color: #b0b0b0;
+}
+
+h4 a {
+  color: #9FA8DA;
+  text-decoration: none;
+}
+
+h4 a:hover {
+  color: #C5CAE9;
 }
 
 #upload-section {
   margin-top: 1rem;
   padding: 2rem;
-  border: 2px dashed #D1D5DB;
+  border: 2px dashed #9FA8DA;
   border-radius: 0.75rem;
   width: 100%;
   max-width: 720px;
+  background: #2a2a2a;
+  transition: all 0.3s ease;
+}
+
+#upload-section:hover {
+  border-color: #C5CAE9;
+  background: #333333;
 }
 
 #queue-section {
   margin: 1rem 0;
   width: 100%;
   max-width: 720px;
+  background: #2a2a2a;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #404040;
 }
 
 #queue-controls {
   display: flex;
   gap: 1rem;
   justify-content: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-#queue-controls button {
+#queue-controls button,
+#download-all {
   padding: 0.5rem 1rem;
-  border: 1px solid #D1D5DB;
+  border: 1px solid #9FA8DA;
   border-radius: 0.5rem;
-  background: white;
+  background: #9FA8DA;
+  color: #1a1a1a;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-#queue-controls button:hover {
-  background: #F3F4F6;
+#queue-controls button:hover,
+#download-all:hover {
+  background: #C5CAE9;
+  border-color: #C5CAE9;
+  transform: translateY(-1px);
 }
 
-#queue-controls button:disabled {
+#queue-controls button:disabled,
+#download-all:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+}
+
+#download-all {
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
 #queue-status {
@@ -77,6 +126,8 @@ h4 {
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
+  color: #b0b0b0;
+  margin-top: 0.5rem;
 }
 
 #images-container {
@@ -98,12 +149,13 @@ h4 {
 #processed-section h3 {
   margin-bottom: 1rem;
   padding: 0.75rem;
-  background: #F3F4F6;
+  background: #9FA8DA;
   border-radius: 0.5rem;
   text-align: center;
   font-size: 16px;
-  color: #374151;
-  border: 1px solid #E5E7EB;
+  color: #1a1a1a;
+  font-weight: 600;
+  border: none;
 }
 
 .image-grid {
@@ -126,30 +178,34 @@ h4 {
 
 .image-result {
   position: relative;
-  border: 1px solid #D1D5DB;
+  border: 1px solid #404040;
   border-radius: 0.5rem;
   overflow: hidden;
-  background: #F9FAFB;
+  background: #2a2a2a;
   transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 
 .image-result:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(159, 168, 218, 0.2);
+  border-color: #9FA8DA;
 }
 
 .original-image {
-  border-left: 4px solid #3B82F6;
+  border-left: 4px solid #9FA8DA;
 }
 
 .processed-image {
-  border-left: 4px solid #10B981;
+  border-left: 4px solid #C5CAE9;
 }
 
 .image-result img,
 .image-result canvas {
   width: 100%;
   height: auto;
+  max-height: 400px;
   display: block;
   object-fit: contain;
   background-image: 
@@ -161,12 +217,22 @@ h4 {
   background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 }
 
+.image-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  max-height: 400px;
+  overflow: hidden;
+}
+
 .image-info {
   padding: 0.75rem;
   font-size: 12px;
-  color: #6B7280;
-  border-top: 1px solid #E5E7EB;
-  background: white;
+  color: #b0b0b0;
+  border-top: 1px solid #404040;
+  background: #333333;
 }
 
 .image-info > div {
@@ -187,19 +253,19 @@ h4 {
 }
 
 .status.pending {
-  background: #FEF3C7;
-  color: #92400E;
+  background: #9FA8DA;
+  color: #1a1a1a;
 }
 
 .status.processing {
-  background: #DBEAFE;
-  color: #1E40AF;
+  background: #C5CAE9;
+  color: #1a1a1a;
   animation: pulse 2s infinite;
 }
 
 .status.error {
-  background: #FEE2E2;
-  color: #DC2626;
+  background: #ff6b6b;
+  color: #ffffff;
 }
 
 @keyframes pulse {
@@ -211,16 +277,17 @@ h4 {
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem;
-  border-top: 1px solid #E5E7EB;
-  background: #F9FAFB;
+  border-top: 1px solid #404040;
+  background: #333333;
 }
 
 .image-actions button {
   flex: 1;
   padding: 0.5rem;
-  border: 1px solid #D1D5DB;
+  border: 1px solid #9FA8DA;
   border-radius: 0.25rem;
-  background: white;
+  background: #9FA8DA;
+  color: #1a1a1a;
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
@@ -228,8 +295,8 @@ h4 {
 }
 
 .image-actions button:hover {
-  background: #F3F4F6;
-  border-color: #9CA3AF;
+  background: #C5CAE9;
+  border-color: #C5CAE9;
   transform: translateY(-1px);
 }
 
@@ -241,6 +308,12 @@ h4 {
   gap: 0.4rem;
   font-size: 18px;
   cursor: pointer;
+  color: #e0e0e0;
+  transition: color 0.2s ease;
+}
+
+#upload-button:hover {
+  color: #9FA8DA;
 }
 
 #upload {
@@ -251,14 +324,19 @@ svg {
   pointer-events: none;
 }
 
+svg path {
+  fill: currentColor;
+}
+
 #example {
   font-size: 14px;
   text-decoration: underline;
   cursor: pointer;
+  color: #9FA8DA;
 }
 
 #example:hover {
-  color: #2563EB;
+  color: #C5CAE9;
 }
 
 
@@ -266,4 +344,5 @@ svg {
 #status {
   min-height: 16px;
   margin: 8px 0;
+  color: #e0e0e0;
 }
