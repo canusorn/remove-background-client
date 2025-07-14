@@ -219,6 +219,12 @@ async function processQueue() {
             imageQueue = imageQueue.filter(qItem => qItem.id !== item.id);
             processedImages.push(result);
 
+            // Remove original image from UI after successful processing
+            const originalElement = originalImagesContainer.querySelector(`[data-id="${item.id}"]`);
+            if (originalElement) {
+                originalElement.remove();
+            }
+
             // Add to processed images UI
             addProcessedImageToResults(result);
 
