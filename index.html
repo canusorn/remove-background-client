@@ -1,59 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Transformers.js - Background Removal</title>
+  <title>Cyno AI Background Removal - ลบพื้นหลังฟรี ไม่จำกัด ทีละหลายรูปได้</title>
 </head>
 
 <body>
-  <h1>Background Removal w/ <a href="https://github.com/huggingface/transformers.js" target="_blank">🤗 Transformers.js</a>
+  <h1>ลบพื้นหลังด้วย Cyno Ai</a>
   </h1>
-  <h4>Runs locally in your browser, powered by the <a href="https://huggingface.co/briaai/RMBG-1.4" target="_blank">RMBG V1.4 model</a> from <a
+  <h4>Cyno AI Background Removal - ลบพื้นหลังฟรี ไม่จำกัด ทีละหลายรูปได้ ทำงานในเบราว์เซอร์ของคุณจาก <a
       href="https://bria.ai/" target="_blank">BRIA AI</a>
   </h4>
+  <h4>ลบพื้นหลังฟรี ลดขนาดรูปภาพฟรี และตัดรูปฟรี</h4>
 
-  
+
   <div id="queue-section">
     <div id="queue-status">
       <span id="status"></span>
       <span id="queue-info"></span>
     </div>
   </div>
-  
-  
+
+
   <div id="images-container">
     <div id="original-section">
-      <h3>📁 Original Images</h3>
+      <h3>📁 รูปภาพต้นฉบับ</h3>
       <div id="settings-section">
-        <h3>⚙️ Export Settings</h3>
+        <h3>⚙️ การตั้งค่า</h3>
         <div class="setting-item">
           <label>
             <input type="checkbox" id="use-custom-size" />
-            Use custom export size
+            แก้ไขขนาดรูปภาพ
           </label>
         </div>
         <div class="setting-item" id="size-controls" style="display: none;">
           <div class="size-input-group">
-            <label for="export-width">Width:</label>
+            <label for="export-width">ความกว้าง:</label>
             <input type="number" id="export-width" value="1024" min="1" max="4096" />
-            <label for="export-height">Height:</label>
+            <label for="export-height">ความสูง:</label>
             <input type="number" id="export-height" value="1024" min="1" max="4096" />
           </div>
           <div class="setting-item">
             <label>
               <input type="checkbox" id="lock-aspect-ratio" checked />
-              Lock aspect ratio
+              ล็อคอัตราส่วน
             </label>
           </div>
         </div>
         <div id="queue-controls">
-        <button id="start-processing">Start Remove Background</button>
-        <button id="clear-queue">Clear Queue</button>
+          <button id="start-processing">เริ่มลบพื้นหลังทั้งหมด</button>
+          <!-- <button id="clear-queue">ล้างคิว</button> -->
+        </div>
       </div>
-      </div>
-      
+
       <div id="upload-section">
         <label id="upload-button" for="upload">
           <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,18 +62,18 @@
               d="M3.5 24.3a3 3 0 0 1-1.9-.8c-.5-.5-.8-1.2-.8-1.9V2.9c0-.7.3-1.3.8-1.9.6-.5 1.2-.7 2-.7h18.6c.7 0 1.3.2 1.9.7.5.6.7 1.2.7 2v18.6c0 .7-.2 1.4-.7 1.9a3 3 0 0 1-2 .8H3.6Zm0-2.7h18.7V2.9H3.5v18.7Zm2.7-2.7h13.3c.3 0 .5 0 .6-.3v-.7l-3.7-5a.6.6 0 0 0-.6-.2c-.2 0-.4 0-.5.3l-3.5 4.6-2.4-3.3a.6.6 0 0 0-.6-.3c-.2 0-.4.1-.5.3l-2.7 3.6c-.1.2-.2.4 0 .7.1.2.3.3.6.3Z">
             </path>
           </svg>
-          Click to upload images (multiple selection supported)
-          <label id="example">(or try example)</label>
+          คลิกหรือลากเพื่ออัปโหลดรูปภาพ (รองรับการเลือกหลายไฟล์)
+          <label id="example">(หรือลองรูปตัวอย่าง)</label>
         </label>
         <input id="upload" type="file" accept="image/*" multiple />
       </div>
       <div id="original-images" class="image-grid"></div>
     </div>
-    
+
     <div id="processed-section">
-      <h3>✨ Background Removed</h3>
-      
-      <button id="download-all">Download All</button>
+      <h3>✨ รูปภาพที่ลบพื้นหลังแล้ว</h3>
+
+      <button id="download-all">ดาวน์โหลดทั้งหมด</button>
       <div id="processed-images" class="image-grid"></div>
     </div>
   </div>

@@ -34,7 +34,7 @@ let isProcessing = false;
 let currentProcessingIndex = 0;
 
 // Load model and processor
-status.textContent = 'Loading model...';
+status.textContent = 'กำลังโหลดโมเดล...';
 
 const model = await AutoModel.from_pretrained('briaai/RMBG-1.4', {
     // Do not require config.json to be present in the repository
@@ -57,41 +57,45 @@ const processor = await AutoProcessor.from_pretrained('briaai/RMBG-1.4', {
     }
 });
 
-status.textContent = 'Ready';
+status.textContent = 'พร้อมใช้งาน';
 updateQueueInfo();
 
 // Initialize upload section visibility
 const uploadSection = document.getElementById('upload-section');
 uploadSection.style.display = 'block';
 
-// Event listeners
-example.addEventListener('click', (e) => {
-    e.preventDefault();
-    addToQueue({ url: EXAMPLE_URL, name: 'Example Image', type: 'example' });
-});
-
-fileUpload.addEventListener('change', function (e) {
-    const files = Array.from(e.target.files);
-    if (files.length === 0) {
-        return;
-    }
-
-    files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = e2 => {
-            addToQueue({
-                url: e2.target.result,
-                name: file.name,
-                type: 'file',
-                size: file.size
-            });
-        };
-        reader.readAsDataURL(file);
+// Event listeners with safety checks
+if (example) {
+    example.addEventListener('click', (e) => {
+        e.preventDefault();
+        addToQueue({ url: EXAMPLE_URL, name: 'Example Image', type: 'example' });
     });
+}
 
-    // Clear the input
-    e.target.value = '';
-});
+if (fileUpload) {
+    fileUpload.addEventListener('change', function (e) {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) {
+            return;
+        }
+
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = e2 => {
+                addToQueue({
+                    url: e2.target.result,
+                    name: file.name,
+                    type: 'file',
+                    size: file.size
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Clear the input
+        e.target.value = '';
+    });
+}
 
 // Drag and drop functionality
 const uploadButton = document.getElementById('upload-button');
@@ -117,7 +121,7 @@ function handleDrop(e) {
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
     
     if (imageFiles.length === 0) {
-        alert('Please drop image files only.');
+        alert('กรุณาลากเฉพาะไฟล์รูปภาพเท่านั้น');
         return;
     }
     
@@ -135,68 +139,87 @@ function handleDrop(e) {
     });
 }
 
-// Set up drag and drop event listeners after functions are defined
-// Prevent default drag behaviors
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    uploadSection.addEventListener(eventName, preventDefaults, false);
-    document.body.addEventListener(eventName, preventDefaults, false);
-});
+// Set up drag and drop event listeners after functions are defined with safety checks
+if (uploadSection) {
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
 
-// Highlight drop area when item is dragged over it
-['dragenter', 'dragover'].forEach(eventName => {
-    uploadSection.addEventListener(eventName, highlight, false);
-});
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, highlight, false);
+    });
 
-['dragleave', 'drop'].forEach(eventName => {
-    uploadSection.addEventListener(eventName, unhighlight, false);
-});
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, unhighlight, false);
+    });
 
-// Handle dropped files
-uploadSection.addEventListener('drop', handleDrop, false);
+    // Handle dropped files
+    uploadSection.addEventListener('drop', handleDrop, false);
+}
 
-startProcessingBtn.addEventListener('click', () => {
-    if (!isProcessing && imageQueue.length > 0) {
-        processQueue();
-    }
-});
+// Add safety checks for event listeners
+if (startProcessingBtn) {
+    startProcessingBtn.addEventListener('click', () => {
+        if (!isProcessing && imageQueue.length > 0) {
+            processQueue();
+        }
+    });
+}
 
-clearQueueBtn.addEventListener('click', () => {
-    if (!isProcessing) {
-        clearQueue();
-    }
-});
+if (clearQueueBtn) {
+    clearQueueBtn.addEventListener('click', () => {
+        if (!isProcessing) {
+            clearQueue();
+        }
+    });
+}
 
-downloadAllBtn.addEventListener('click', () => {
-    downloadAllProcessed();
-});
+if (downloadAllBtn) {
+    downloadAllBtn.addEventListener('click', () => {
+        downloadAllProcessed();
+    });
+}
 
 // Resize settings event listeners
-useCustomSizeCheckbox.addEventListener('change', () => {
-    sizeControls.style.display = useCustomSizeCheckbox.checked ? 'block' : 'none';
-});
+if (useCustomSizeCheckbox) {
+    useCustomSizeCheckbox.addEventListener('change', () => {
+        if (sizeControls) {
+            sizeControls.style.display = useCustomSizeCheckbox.checked ? 'block' : 'none';
+        }
+    });
+}
 
 // Aspect ratio locking
 let originalAspectRatio = 1;
 
-exportWidthInput.addEventListener('input', () => {
-    if (lockAspectRatioCheckbox.checked) {
-        const newHeight = Math.round(exportWidthInput.value / originalAspectRatio);
-        exportHeightInput.value = newHeight;
-    }
-});
+if (exportWidthInput) {
+    exportWidthInput.addEventListener('input', () => {
+        if (lockAspectRatioCheckbox && lockAspectRatioCheckbox.checked && exportHeightInput) {
+            const newHeight = Math.round(exportWidthInput.value / originalAspectRatio);
+            exportHeightInput.value = newHeight;
+        }
+    });
+}
 
-exportHeightInput.addEventListener('input', () => {
-    if (lockAspectRatioCheckbox.checked) {
-        const newWidth = Math.round(exportHeightInput.value * originalAspectRatio);
-        exportWidthInput.value = newWidth;
-    }
-});
+if (exportHeightInput) {
+    exportHeightInput.addEventListener('input', () => {
+        if (lockAspectRatioCheckbox && lockAspectRatioCheckbox.checked && exportWidthInput) {
+            const newWidth = Math.round(exportHeightInput.value * originalAspectRatio);
+            exportWidthInput.value = newWidth;
+        }
+    });
+}
 
-lockAspectRatioCheckbox.addEventListener('change', () => {
-    if (lockAspectRatioCheckbox.checked) {
-        originalAspectRatio = exportWidthInput.value / exportHeightInput.value;
-    }
-});
+if (lockAspectRatioCheckbox) {
+    lockAspectRatioCheckbox.addEventListener('change', () => {
+        if (lockAspectRatioCheckbox.checked && exportWidthInput && exportHeightInput) {
+            originalAspectRatio = exportWidthInput.value / exportHeightInput.value;
+        }
+    });
+}
 
 // Queue management functions
 function addToQueue(imageData) {
@@ -226,7 +249,7 @@ function clearQueue() {
     originalImagesContainer.innerHTML = '';
     processedImagesContainer.innerHTML = '';
     updateQueueInfo();
-    status.textContent = 'Queue cleared';
+    status.textContent = 'ล้างคิวแล้ว';
 
     // Show upload section when queue is cleared
     uploadSection.style.display = 'block';
@@ -237,11 +260,18 @@ function updateQueueInfo() {
     const processing = imageQueue.filter(item => item.status === 'processing').length;
     const completed = processedImages.length;
 
-    queueInfo.textContent = `Queue: ${pending} pending, ${processing} processing, ${completed} completed`;
+    queueInfo.textContent = `คิว: ${pending} รอดำเนินการ, ${processing} กำลังประมวลผล, ${completed} เสร็จสิ้น`;
 
-    startProcessingBtn.disabled = isProcessing || pending === 0;
-    clearQueueBtn.disabled = isProcessing;
-    downloadAllBtn.disabled = completed === 0;
+    // Add safety checks for button elements
+    if (startProcessingBtn) {
+        startProcessingBtn.disabled = isProcessing || pending === 0;
+    }
+    if (clearQueueBtn) {
+        clearQueueBtn.disabled = isProcessing;
+    }
+    if (downloadAllBtn) {
+        downloadAllBtn.disabled = completed === 0;
+    }
 
     // Show/hide upload section based on queue status (with safety check)
     const uploadSectionElement = document.getElementById('upload-section');
@@ -302,7 +332,7 @@ async function processQueue() {
     }
 
     isProcessing = false;
-    status.textContent = 'All images processed!';
+    status.textContent = 'ประมวลผลรูปภาพทั้งหมดเสร็จสิ้น!';
     updateQueueInfo();
 }
 
@@ -337,7 +367,7 @@ function resizeCanvas(sourceCanvas, targetWidth, targetHeight) {
 
 // Process a single image
 async function processImage(item) {
-    status.textContent = `Processing ${item.name}... (${currentProcessingIndex})`;
+    status.textContent = `กำลังประมวลผล ${item.name}... (${currentProcessingIndex})`;
 
     // Read image
     const image = await RawImage.fromURL(item.url);
@@ -393,9 +423,9 @@ function addOriginalImageToResults(item) {
     resultDiv.setAttribute('data-id', item.id);
 
     const statusClass = item.status === 'error' ? 'error' : item.status;
-    const statusText = item.status === 'error' ? `❌ Error: ${item.error}` :
-        item.status === 'processing' ? '⏳ Processing...' :
-            item.status === 'pending' ? '⏸️ Pending' : '✅ Ready';
+    const statusText = item.status === 'error' ? `❌ ข้อผิดพลาด: ${item.error}` :
+        item.status === 'processing' ? '⏳ กำลังประมวลผล...' :
+            item.status === 'pending' ? '⏸️ รอดำเนินการ' : '✅ พร้อม';
 
     resultDiv.innerHTML = `
         <div class="image-container">
@@ -404,11 +434,11 @@ function addOriginalImageToResults(item) {
         <div class="image-info">
             <div><strong>${item.name}</strong></div>
             <div class="status ${statusClass}">${statusText}</div>
-            <div>Added: ${item.addedAt.toLocaleTimeString()}</div>
-            ${item.size ? `<div>Size: ${(item.size / 1024).toFixed(1)} KB</div>` : ''}
+            <div>เพิ่มเมื่อ: ${item.addedAt.toLocaleTimeString()}</div>
+            ${item.size ? `<div>ขนาด: ${(item.size / 1024).toFixed(1)} KB</div>` : ''}
         </div>
         <div class="image-actions">
-            <button onclick="removeOriginalImage('${item.id}')">Remove</button>
+            <button onclick="removeOriginalImage('${item.id}')">ลบ</button>
         </div>
     `;
 
@@ -426,16 +456,16 @@ function addProcessedImageToResults(result) {
         </div>
         <div class="image-info">
             <div><strong>${result.name}</strong></div>
-            <div>Export: ${result.dimensions.width} × ${result.dimensions.height}</div>
+            <div>ส่งออก: ${result.dimensions.width} × ${result.dimensions.height}</div>
             ${result.dimensions.originalWidth && result.dimensions.originalHeight && 
               (result.dimensions.width !== result.dimensions.originalWidth || result.dimensions.height !== result.dimensions.originalHeight) ? 
-              `<div>Original: ${result.dimensions.originalWidth} × ${result.dimensions.originalHeight}</div>` : ''}
-            <div>✅ Processed: ${result.processedAt.toLocaleTimeString()}</div>
+              `<div>ต้นฉบับ: ${result.dimensions.originalWidth} × ${result.dimensions.originalHeight}</div>` : ''}
+            <div>✅ ประมวลผลเมื่อ: ${result.processedAt.toLocaleTimeString()}</div>
         </div>
         <div class="image-actions">
-            <button onclick="cropImage('${result.id}')">Crop</button>
-            <button onclick="downloadImage('${result.id}')">Download</button>
-            <button onclick="removeProcessedImage('${result.id}')">Remove</button>
+            <button onclick="cropImage('${result.id}')">ครอบตัด</button>
+            <button onclick="downloadImage('${result.id}')">ดาวน์โหลด</button>
+            <button onclick="removeProcessedImage('${result.id}')">ลบ</button>
         </div>
     `;
 
@@ -456,7 +486,7 @@ function downloadImage(imageId) {
     const result = processedImages.find(img => img.id === imageId);
     if (!result) {
         console.error('Image not found for download:', imageId);
-        alert('Error: Image not found for download');
+        alert('ข้อผิดพลาด: ไม่พบรูปภาพสำหรับดาวน์โหลด');
         return;
     }
 
@@ -476,13 +506,13 @@ function downloadImage(imageId) {
         console.log('Download initiated for:', result.name);
     } catch (error) {
         console.error('Download error:', error);
-        alert('Error downloading image: ' + error.message);
+        alert('ข้อผิดพลาดในการดาวน์โหลดรูปภาพ: ' + error.message);
     }
 }
 
 function downloadAllProcessed() {
     if (processedImages.length === 0) {
-        alert('No processed images to download');
+        alert('ไม่มีรูปภาพที่ประมวลผลแล้วให้ดาวน์โหลด');
         return;
     }
 
@@ -526,11 +556,11 @@ function updateOriginalImageStatus(imageId, status) {
             let statusText;
             if (status === 'error') {
                 const item = imageQueue.find(img => img.id === imageId);
-                statusText = item && item.error ? `❌ ${item.error}` : '❌ Processing Error';
+                statusText = item && item.error ? `❌ ${item.error}` : '❌ ข้อผิดพลาดในการประมวลผล';
             } else {
-                statusText = status === 'processing' ? '⏳ Processing...' :
-                    status === 'pending' ? '⏸️ Pending' :
-                    status === 'completed' ? '✅ Background was removed' : '✅ Ready';
+                statusText = status === 'processing' ? '⏳ กำลังประมวลผล...' :
+                    status === 'pending' ? '⏸️ รอดำเนินการ' :
+                    status === 'completed' ? '✅ ลบพื้นหลังแล้ว' : '✅ พร้อม';
             }
             statusElement.textContent = statusText;
         }
@@ -541,7 +571,7 @@ function updateOriginalImageStatus(imageId, status) {
 function cropImage(imageId) {
     const result = processedImages.find(img => img.id === imageId);
     if (!result) {
-        alert('Error: Image not found for cropping');
+        alert('ข้อผิดพลาด: ไม่พบรูปภาพสำหรับครอบตัด');
         return;
     }
 
@@ -551,7 +581,7 @@ function cropImage(imageId) {
     modal.innerHTML = `
         <div class="crop-container">
             <div class="crop-header">
-                <h3>Crop Image: ${result.name}</h3>
+                <h3>ครอบตัดรูปภาพ: ${result.name}</h3>
                 <button class="close-crop" onclick="closeCropModal()">&times;</button>
             </div>
             <div class="crop-canvas-container">
@@ -559,8 +589,8 @@ function cropImage(imageId) {
                 <div class="crop-selection"></div>
             </div>
             <div class="crop-controls">
-                <button onclick="applyCrop('${imageId}')">Apply Crop</button>
-                <button onclick="closeCropModal()">Cancel</button>
+                <button onclick="applyCrop('${imageId}')">ใช้การครอบตัด</button>
+                <button onclick="closeCropModal()">ยกเลิก</button>
             </div>
         </div>
     `;
@@ -642,7 +672,7 @@ function applyCrop(imageId) {
     const cropData = modal.cropData;
     
     if (!cropData) {
-        alert('Error: Crop data not found');
+        alert('ข้อผิดพลาด: ไม่พบข้อมูลการครอบตัด');
         return;
     }
     
@@ -654,7 +684,7 @@ function applyCrop(imageId) {
     if (selection.style.display === 'none' || 
         parseInt(selection.style.width) === 0 || 
         parseInt(selection.style.height) === 0) {
-        alert('Please select an area to crop');
+        alert('กรุณาเลือกพื้นที่ที่ต้องการครอบตัด');
         return;
     }
     
@@ -668,7 +698,7 @@ function applyCrop(imageId) {
     // Find the original result
     const result = processedImages.find(img => img.id === imageId);
     if (!result) {
-        alert('Error: Image not found');
+        alert('ข้อผิดพลาด: ไม่พบรูปภาพ');
         return;
     }
     
@@ -702,12 +732,12 @@ function applyCrop(imageId) {
         // Update dimensions display
         const dimensionsDiv = resultElement.querySelector('.image-info div:nth-child(2)');
         if (dimensionsDiv) {
-            dimensionsDiv.textContent = `Export: ${Math.round(cropWidth)} × ${Math.round(cropHeight)}`;
+            dimensionsDiv.textContent = `ส่งออก: ${Math.round(cropWidth)} × ${Math.round(cropHeight)}`;
         }
     }
     
     closeCropModal();
-    alert('Image cropped successfully!');
+    alert('ครอบตัดรูปภาพสำเร็จ!');
 }
 
 // Make functions global for onclick handlers
