@@ -371,6 +371,7 @@ function addProcessedImageToResults(result) {
             <div>✅ Processed: ${result.processedAt.toLocaleTimeString()}</div>
         </div>
         <div class="image-actions">
+            <button onclick="cropImage('${result.id}')">Crop</button>
             <button onclick="downloadImage('${result.id}')">Download</button>
             <button onclick="removeProcessedImage('${result.id}')">Remove</button>
         </div>
@@ -474,7 +475,183 @@ function updateOriginalImageStatus(imageId, status) {
     }
 }
 
+// Crop functionality
+function cropImage(imageId) {
+    const result = processedImages.find(img => img.id === imageId);
+    if (!result) {
+        alert('Error: Image not found for cropping');
+        return;
+    }
+
+    // Create crop modal
+    const modal = document.createElement('div');
+    modal.className = 'crop-modal';
+    modal.innerHTML = `
+        <div class="crop-container">
+            <div class="crop-header">
+                <h3>Crop Image: ${result.name}</h3>
+                <button class="close-crop" onclick="closeCropModal()">&times;</button>
+            </div>
+            <div class="crop-canvas-container">
+                <canvas class="crop-canvas"></canvas>
+                <div class="crop-selection"></div>
+            </div>
+            <div class="crop-controls">
+                <button onclick="applyCrop('${imageId}')">Apply Crop</button>
+                <button onclick="closeCropModal()">Cancel</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    
+    // Setup crop canvas
+    const cropCanvas = modal.querySelector('.crop-canvas');
+    const cropSelection = modal.querySelector('.crop-selection');
+    const container = modal.querySelector('.crop-canvas-container');
+    
+    // Set canvas size and draw image
+    const maxSize = 400;
+    const scale = Math.min(maxSize / result.processedCanvas.width, maxSize / result.processedCanvas.height);
+    cropCanvas.width = result.processedCanvas.width * scale;
+    cropCanvas.height = result.processedCanvas.height * scale;
+    
+    const ctx = cropCanvas.getContext('2d');
+    ctx.drawImage(result.processedCanvas, 0, 0, cropCanvas.width, cropCanvas.height);
+    
+    // Initialize crop selection
+    let isSelecting = false;
+    let startX, startY, currentX, currentY;
+    
+    function updateSelection() {
+        const rect = cropCanvas.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        
+        const left = Math.min(startX, currentX);
+        const top = Math.min(startY, currentY);
+        const width = Math.abs(currentX - startX);
+        const height = Math.abs(currentY - startY);
+        
+        cropSelection.style.left = (left + rect.left - containerRect.left) + 'px';
+        cropSelection.style.top = (top + rect.top - containerRect.top) + 'px';
+        cropSelection.style.width = width + 'px';
+        cropSelection.style.height = height + 'px';
+        cropSelection.style.display = 'block';
+    }
+    
+    cropCanvas.addEventListener('mousedown', (e) => {
+        const rect = cropCanvas.getBoundingClientRect();
+        startX = e.clientX - rect.left;
+        startY = e.clientY - rect.top;
+        isSelecting = true;
+        cropSelection.style.display = 'none';
+    });
+    
+    cropCanvas.addEventListener('mousemove', (e) => {
+        if (!isSelecting) return;
+        const rect = cropCanvas.getBoundingClientRect();
+        currentX = e.clientX - rect.left;
+        currentY = e.clientY - rect.top;
+        updateSelection();
+    });
+    
+    cropCanvas.addEventListener('mouseup', () => {
+        isSelecting = false;
+    });
+    
+    // Store crop data for later use
+    modal.cropData = {
+        imageId,
+        scale,
+        canvas: cropCanvas,
+        selection: cropSelection
+    };
+}
+
+function closeCropModal() {
+    const modal = document.querySelector('.crop-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function applyCrop(imageId) {
+    const modal = document.querySelector('.crop-modal');
+    const cropData = modal.cropData;
+    
+    if (!cropData) {
+        alert('Error: Crop data not found');
+        return;
+    }
+    
+    const selection = cropData.selection;
+    const selectionRect = selection.getBoundingClientRect();
+    const canvasRect = cropData.canvas.getBoundingClientRect();
+    
+    // Check if selection exists
+    if (selection.style.display === 'none' || 
+        parseInt(selection.style.width) === 0 || 
+        parseInt(selection.style.height) === 0) {
+        alert('Please select an area to crop');
+        return;
+    }
+    
+    // Calculate crop coordinates relative to canvas
+    const containerRect = cropData.canvas.parentElement.getBoundingClientRect();
+    const cropX = (parseInt(selection.style.left) - (canvasRect.left - containerRect.left)) / cropData.scale;
+    const cropY = (parseInt(selection.style.top) - (canvasRect.top - containerRect.top)) / cropData.scale;
+    const cropWidth = parseInt(selection.style.width) / cropData.scale;
+    const cropHeight = parseInt(selection.style.height) / cropData.scale;
+    
+    // Find the original result
+    const result = processedImages.find(img => img.id === imageId);
+    if (!result) {
+        alert('Error: Image not found');
+        return;
+    }
+    
+    // Create cropped canvas
+    const croppedCanvas = document.createElement('canvas');
+    croppedCanvas.width = cropWidth;
+    croppedCanvas.height = cropHeight;
+    const croppedCtx = croppedCanvas.getContext('2d');
+    
+    // Draw cropped portion
+    croppedCtx.drawImage(
+        result.processedCanvas,
+        cropX, cropY, cropWidth, cropHeight,
+        0, 0, cropWidth, cropHeight
+    );
+    
+    // Update the result with cropped canvas
+    result.processedCanvas = croppedCanvas;
+    result.dimensions.width = cropWidth;
+    result.dimensions.height = cropHeight;
+    
+    // Update the UI
+    const resultElement = processedImagesContainer.querySelector(`[data-id="${imageId}"]`);
+    if (resultElement) {
+        const canvas = resultElement.querySelector('canvas');
+        canvas.width = croppedCanvas.width;
+        canvas.height = croppedCanvas.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(croppedCanvas, 0, 0);
+        
+        // Update dimensions display
+        const dimensionsDiv = resultElement.querySelector('.image-info div:nth-child(2)');
+        if (dimensionsDiv) {
+            dimensionsDiv.textContent = `Export: ${Math.round(cropWidth)} × ${Math.round(cropHeight)}`;
+        }
+    }
+    
+    closeCropModal();
+    alert('Image cropped successfully!');
+}
+
 // Make functions global for onclick handlers
 window.downloadImage = downloadImage;
 window.removeOriginalImage = removeOriginalImage;
 window.removeProcessedImage = removeProcessedImage;
+window.cropImage = cropImage;
+window.closeCropModal = closeCropModal;
+window.applyCrop = applyCrop;
