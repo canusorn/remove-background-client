@@ -27,6 +27,16 @@ body {
   align-items: center;
 }
 
+#upload-section.drag-over {
+  border-color: #9FA8DA;
+  background: #3a3a4a;
+  transform: scale(1.02);
+}
+
+#upload-section.drag-over #upload-button {
+  color: #9FA8DA;
+}
+
 h1,
 h4 {
   text-align: center;

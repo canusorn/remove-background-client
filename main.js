@@ -93,6 +93,67 @@ fileUpload.addEventListener('change', function (e) {
     e.target.value = '';
 });
 
+// Drag and drop functionality
+const uploadButton = document.getElementById('upload-button');
+
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function highlight(e) {
+    uploadSection.classList.add('drag-over');
+}
+
+function unhighlight(e) {
+    uploadSection.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = Array.from(dt.files);
+    
+    // Filter for image files only
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length === 0) {
+        alert('Please drop image files only.');
+        return;
+    }
+    
+    imageFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e2 => {
+            addToQueue({
+                url: e2.target.result,
+                name: file.name,
+                type: 'file',
+                size: file.size
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Set up drag and drop event listeners after functions are defined
+// Prevent default drag behaviors
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadSection.addEventListener(eventName, preventDefaults, false);
+    document.body.addEventListener(eventName, preventDefaults, false);
+});
+
+// Highlight drop area when item is dragged over it
+['dragenter', 'dragover'].forEach(eventName => {
+    uploadSection.addEventListener(eventName, highlight, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+    uploadSection.addEventListener(eventName, unhighlight, false);
+});
+
+// Handle dropped files
+uploadSection.addEventListener('drop', handleDrop, false);
+
 startProcessingBtn.addEventListener('click', () => {
     if (!isProcessing && imageQueue.length > 0) {
         processQueue();
@@ -168,7 +229,6 @@ function clearQueue() {
     status.textContent = 'Queue cleared';
 
     // Show upload section when queue is cleared
-    const uploadSection = document.getElementById('upload-section');
     uploadSection.style.display = 'block';
 }
 
@@ -183,9 +243,11 @@ function updateQueueInfo() {
     clearQueueBtn.disabled = isProcessing;
     downloadAllBtn.disabled = completed === 0;
 
-    // Show/hide upload section based on queue status
-    const uploadSection = document.getElementById('upload-section');
-    uploadSection.style.display = 'block';
+    // Show/hide upload section based on queue status (with safety check)
+    const uploadSectionElement = document.getElementById('upload-section');
+    if (uploadSectionElement) {
+        uploadSectionElement.style.display = 'block';
+    }
 
 }
 
