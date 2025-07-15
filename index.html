@@ -5,78 +5,132 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cyno AI Background Removal - ลบพื้นหลังฟรี ไม่จำกัด ทีละหลายรูปได้</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="ลบพื้นหลังรูปภาพฟรีด้วย AI ไม่จำกัดจำนวน รองรับการประมวลผลหลายรูปพร้อมกัน ใช้งานง่าย ไม่ต้องสมัครสมาชิก" />
+  <meta name="keywords"
+    content="ลบพื้นหลัง, remove background, AI, ฟรี, รูปภาพ, photo editor, background remover, cyno ai" />
+  <meta name="author" content="Cyno AI" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://cynoiot.com/cynoai/background-remove/" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cynoiot.com/cynoai/background-remove/" />
+  <meta property="og:title" content="Cyno AI Background Removal - ลบพื้นหลังฟรี ไม่จำกัด" />
+  <meta property="og:description" content="ลบพื้นหลังรูปภาพฟรีด้วย AI ไม่จำกัดจำนวน รองรับการประมวลผลหลายรูปพร้อมกัน" />
+  <meta property="og:image" content="https://cynoiot.com/demo/images/landing/dashboard.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:locale" content="th_TH" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="https://cynoiot.com/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Cyno AI Background Removal",
+    "description": "ลบพื้นหลังรูปภาพฟรีด้วย AI ไม่จำกัดจำนวน รองรับการประมวลผลหลายรูปพร้อมกัน",
+    "url": "https://cynoiot.com/cynoai/background-remove/",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "THB"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "Cyno AI"
+    }
+  }
+  </script>
 </head>
 
 <body>
-  <h1>ลบพื้นหลังด้วย Cyno Ai</a>
-  </h1>
-  <h4>Cyno AI Background Removal - ลบพื้นหลังฟรี ไม่จำกัด ทีละหลายรูปได้ ทำงานในเบราว์เซอร์ของคุณจาก <a
-      href="https://bria.ai/" target="_blank">BRIA AI</a>
-  </h4>
-  <h4>ลบพื้นหลังฟรี ลดขนาดรูปภาพฟรี และตัดรูปฟรี</h4>
+  <header>
+    <h1>ลบพื้นหลังด้วย Cyno AI</h1>
+    <p>Cyno AI Background Removal - ลบพื้นหลังฟรี ไม่จำกัด ทีละหลายรูปได้ ทำงานในเบราว์เซอร์ของคุณจาก <a
+        href="https://bria.ai/" target="_blank" rel="noopener">BRIA AI</a>
+    </p>
+    <p>ลบพื้นหลังฟรี ลดขนาดรูปภาพฟรี และตัดรูปฟรี</p>
+  </header>
+
+  <main>
 
 
-  <div id="queue-section">
-    <div id="queue-status">
-      <span id="status"></span>
-      <span id="queue-info"></span>
-    </div>
-  </div>
+    <section id="queue-section" aria-label="สถานะคิวการประมวลผล">
+      <div id="queue-status">
+        <span id="status"></span>
+        <span id="queue-info"></span>
+      </div>
+    </section>
 
-
-  <div id="images-container">
-    <div id="original-section">
-      <h3>📁 รูปภาพต้นฉบับ</h3>
-      <div id="settings-section">
-        <h3>⚙️ การตั้งค่า</h3>
-        <div class="setting-item">
-          <label>
-            <input type="checkbox" id="use-custom-size" />
-            แก้ไขขนาดรูปภาพ
-          </label>
-        </div>
-        <div class="setting-item" id="size-controls" style="display: none;">
-          <div class="size-input-group">
-            <label for="export-width">ความกว้าง:</label>
-            <input type="number" id="export-width" value="1024" min="1" max="4096" />
-            <label for="export-height">ความสูง:</label>
-            <input type="number" id="export-height" value="1024" min="1" max="4096" />
-          </div>
+    <section id="images-container">
+      <div id="original-section">
+        <h2>📁 รูปภาพต้นฉบับ</h2>
+        <div id="settings-section">
+          <h3>⚙️ การตั้งค่า</h3>
           <div class="setting-item">
             <label>
-              <input type="checkbox" id="lock-aspect-ratio" checked />
-              ล็อคอัตราส่วน
+              <input type="checkbox" id="use-custom-size" />
+              แก้ไขขนาดรูปภาพ
             </label>
           </div>
+          <div class="setting-item" id="size-controls" style="display: none;">
+            <div class="size-input-group">
+              <label for="export-width">ความกว้าง:</label>
+              <input type="number" id="export-width" value="1024" min="1" max="4096" />
+              <label for="export-height">ความสูง:</label>
+              <input type="number" id="export-height" value="1024" min="1" max="4096" />
+            </div>
+            <div class="setting-item">
+              <label>
+                <input type="checkbox" id="lock-aspect-ratio" checked />
+                ล็อคอัตราส่วน
+              </label>
+            </div>
+          </div>
+          <div id="queue-controls">
+            <button id="start-processing">เริ่มลบพื้นหลังทั้งหมด</button>
+            <!-- <button id="clear-queue">ล้างคิว</button> -->
+          </div>
         </div>
-        <div id="queue-controls">
-          <button id="start-processing">เริ่มลบพื้นหลังทั้งหมด</button>
-          <!-- <button id="clear-queue">ล้างคิว</button> -->
+
+        <div id="upload-section">
+          <label id="upload-button" for="upload">
+            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true">
+              <path fill="#000"
+                d="M3.5 24.3a3 3 0 0 1-1.9-.8c-.5-.5-.8-1.2-.8-1.9V2.9c0-.7.3-1.3.8-1.9.6-.5 1.2-.7 2-.7h18.6c.7 0 1.3.2 1.9.7.5.6.7 1.2.7 2v18.6c0 .7-.2 1.4-.7 1.9a3 3 0 0 1-2 .8H3.6Zm0-2.7h18.7V2.9H3.5v18.7Zm2.7-2.7h13.3c.3 0 .5 0 .6-.3v-.7l-3.7-5a.6.6 0 0 0-.6-.2c-.2 0-.4 0-.5.3l-3.5 4.6-2.4-3.3a.6.6 0 0 0-.6-.3c-.2 0-.4.1-.5.3l-2.7 3.6c-.1.2-.2.4 0 .7.1.2.3.3.6.3Z">
+              </path>
+            </svg>
+            คลิกหรือลากเพื่ออัปโหลดรูปภาพ (รองรับการเลือกหลายไฟล์)
+            <span id="example">(หรือลองรูปตัวอย่าง)</span>
+          </label>
+          <input id="upload" type="file" accept="image/*" multiple aria-label="เลือกไฟล์รูปภาพ" />
         </div>
+        <div id="original-images" class="image-grid" role="region" aria-label="รูปภาพต้นฉบับ"></div>
       </div>
 
-      <div id="upload-section">
-        <label id="upload-button" for="upload">
-          <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#000"
-              d="M3.5 24.3a3 3 0 0 1-1.9-.8c-.5-.5-.8-1.2-.8-1.9V2.9c0-.7.3-1.3.8-1.9.6-.5 1.2-.7 2-.7h18.6c.7 0 1.3.2 1.9.7.5.6.7 1.2.7 2v18.6c0 .7-.2 1.4-.7 1.9a3 3 0 0 1-2 .8H3.6Zm0-2.7h18.7V2.9H3.5v18.7Zm2.7-2.7h13.3c.3 0 .5 0 .6-.3v-.7l-3.7-5a.6.6 0 0 0-.6-.2c-.2 0-.4 0-.5.3l-3.5 4.6-2.4-3.3a.6.6 0 0 0-.6-.3c-.2 0-.4.1-.5.3l-2.7 3.6c-.1.2-.2.4 0 .7.1.2.3.3.6.3Z">
-            </path>
-          </svg>
-          คลิกหรือลากเพื่ออัปโหลดรูปภาพ (รองรับการเลือกหลายไฟล์)
-          <label id="example">(หรือลองรูปตัวอย่าง)</label>
-        </label>
-        <input id="upload" type="file" accept="image/*" multiple />
+      <div id="processed-section">
+        <h2>✨ รูปภาพที่ลบพื้นหลังแล้ว</h2>
+        <button id="download-all" aria-label="ดาวน์โหลดรูปภาพที่ประมวลผลแล้วทั้งหมด">ดาวน์โหลดทั้งหมด</button>
+        <div id="processed-images" class="image-grid" role="region" aria-label="รูปภาพที่ลบพื้นหลังแล้ว"></div>
       </div>
-      <div id="original-images" class="image-grid"></div>
-    </div>
+    </section>
+  </main>
 
-    <div id="processed-section">
-      <h3>✨ รูปภาพที่ลบพื้นหลังแล้ว</h3>
-
-      <button id="download-all">ดาวน์โหลดทั้งหมด</button>
-      <div id="processed-images" class="image-grid"></div>
-    </div>
-  </div>
+  <footer>
+    <p>Powered by <a href="https://bria.ai/" target="_blank" rel="noopener">BRIA AI</a> |
+      <a href="#" rel="noopener">นโยบายความเป็นส่วนตัว</a> |
+      <a href="#" rel="noopener">เงื่อนไขการใช้งาน</a>
+    </p>
+  </footer>
 
   <script type="module" src="/main.js"></script>
 </body>
