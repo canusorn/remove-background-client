@@ -25,7 +25,7 @@
   <meta property="og:locale" content="th_TH" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="https://cynoiot.com/favicon.ico" />
+  <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
   <!-- Structured Data -->
@@ -51,14 +51,14 @@
   </script>
 
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KS2V5EZNDY"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KS2V5EZNDY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-  gtag('config', 'G-KS2V5EZNDY');
-</script>
+    gtag('config', 'G-KS2V5EZNDY');
+  </script>
 </head>
 
 <body>
@@ -82,7 +82,7 @@
 
     <section id="images-container">
       <div id="original-section">
-        <h2>📁 รูปภาพต้นฉบับ</h2>
+        <h2>📁 รูปภาพต้นฉบับ</h2><br>
         <div id="settings-section">
           <h3>⚙️ การตั้งค่า</h3>
           <div class="setting-item">
@@ -120,26 +120,27 @@
               </path>
             </svg>
             คลิกหรือลากเพื่ออัปโหลดรูปภาพ (รองรับการเลือกหลายไฟล์)<br>
-          <small>หรือกด Ctrl+V เพื่อวางรูปภาพจากคลิปบอร์ด</small><br>
-          <span id="example">(หรือลองรูปตัวอย่าง)</span>
+            <small>หรือกด Ctrl+V เพื่อวางรูปภาพจากคลิปบอร์ด</small><br>
+            <span id="example">(หรือลองรูปตัวอย่าง)</span>
           </label>
           <input id="upload" type="file" accept="image/*" multiple aria-label="เลือกไฟล์รูปภาพ" />
-        </div>
+        </div><br>
         <div id="original-images" class="image-grid" role="region" aria-label="รูปภาพต้นฉบับ"></div>
       </div>
 
       <div id="processed-section">
-        <h2>✨ รูปภาพที่ลบพื้นหลังแล้ว</h2>
+        <h2>✨ รูปภาพที่ลบพื้นหลังแล้ว</h2><br>
         <button id="download-all" aria-label="ดาวน์โหลดรูปภาพที่ประมวลผลแล้วทั้งหมด">ดาวน์โหลดทั้งหมด</button>
         <div id="processed-images" class="image-grid" role="region" aria-label="รูปภาพที่ลบพื้นหลังแล้ว"></div>
       </div>
     </section>
   </main>
-
+<br><br>
   <footer>
-    <p>Powered by <a href="https://bria.ai/" target="_blank" rel="noopener">BRIA AI</a> |
+    <p>Powered by <a href="https://bria.ai/" target="_blank" rel="noopener">BRIA AI</a>
+      <!-- |
       <a href="#" rel="noopener">นโยบายความเป็นส่วนตัว</a> |
-      <a href="#" rel="noopener">เงื่อนไขการใช้งาน</a>
+      <a href="#" rel="noopener">เงื่อนไขการใช้งาน</a> -->
     </p>
   </footer>
 

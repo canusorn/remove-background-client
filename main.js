@@ -116,15 +116,15 @@ function unhighlight(e) {
 function handleDrop(e) {
     const dt = e.dataTransfer;
     const files = Array.from(dt.files);
-    
+
     // Filter for image files only
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    
+
     if (imageFiles.length === 0) {
         alert('กรุณาลากเฉพาะไฟล์รูปภาพเท่านั้น');
         return;
     }
-    
+
     imageFiles.forEach(file => {
         const reader = new FileReader();
         reader.onload = e2 => {
@@ -163,14 +163,14 @@ if (uploadSection) {
 // Clipboard paste functionality
 function handlePaste(e) {
     const items = e.clipboardData.items;
-    
+
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
-        
+
         if (item.type.indexOf('image') !== -1) {
             const blob = item.getAsFile();
             const reader = new FileReader();
-            
+
             reader.onload = (e2) => {
                 addToQueue({
                     url: e2.target.result,
@@ -179,7 +179,7 @@ function handlePaste(e) {
                     size: blob.size
                 });
             };
-            
+
             reader.readAsDataURL(blob);
             break;
         }
@@ -262,7 +262,7 @@ function addToQueue(imageData) {
 
     // Add to original images UI immediately
     addOriginalImageToResults(queueItem);
-    
+
     // Update aspect ratio for resize controls if this is the first image
     if (imageQueue.length === 1 && queueItem.url) {
         updateAspectRatioFromImage(queueItem.url);
@@ -381,15 +381,15 @@ function resizeCanvas(sourceCanvas, targetWidth, targetHeight) {
     resizedCanvas.width = targetWidth;
     resizedCanvas.height = targetHeight;
     const ctx = resizedCanvas.getContext('2d');
-    
+
     // Use high-quality image smoothing
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-    
+
     // Draw the source canvas onto the resized canvas
-    ctx.drawImage(sourceCanvas, 0, 0, sourceCanvas.width, sourceCanvas.height, 
-                  0, 0, targetWidth, targetHeight);
-    
+    ctx.drawImage(sourceCanvas, 0, 0, sourceCanvas.width, sourceCanvas.height,
+        0, 0, targetWidth, targetHeight);
+
     return resizedCanvas;
 }
 
@@ -426,8 +426,8 @@ async function processImage(item) {
     ctx.putImageData(pixelData, 0, 0);
 
     // Apply resize if custom size is enabled
-    const finalCanvas = useCustomSizeCheckbox.checked ? 
-        resizeCanvas(canvas, parseInt(exportWidthInput.value), parseInt(exportHeightInput.value)) : 
+    const finalCanvas = useCustomSizeCheckbox.checked ?
+        resizeCanvas(canvas, parseInt(exportWidthInput.value), parseInt(exportHeightInput.value)) :
         canvas;
 
     return {
@@ -435,8 +435,8 @@ async function processImage(item) {
         originalImage: image,
         processedCanvas: finalCanvas,
         processedAt: new Date(),
-        dimensions: { 
-            width: finalCanvas.width, 
+        dimensions: {
+            width: finalCanvas.width,
             height: finalCanvas.height,
             originalWidth: image.width,
             originalHeight: image.height
@@ -485,15 +485,34 @@ function addProcessedImageToResults(result) {
         <div class="image-info">
             <div><strong>${result.name}</strong></div>
             <div>ส่งออก: ${result.dimensions.width} × ${result.dimensions.height}</div>
-            ${result.dimensions.originalWidth && result.dimensions.originalHeight && 
-              (result.dimensions.width !== result.dimensions.originalWidth || result.dimensions.height !== result.dimensions.originalHeight) ? 
-              `<div>ต้นฉบับ: ${result.dimensions.originalWidth} × ${result.dimensions.originalHeight}</div>` : ''}
+            ${result.dimensions.originalWidth && result.dimensions.originalHeight &&
+            (result.dimensions.width !== result.dimensions.originalWidth || result.dimensions.height !== result.dimensions.originalHeight) ?
+            `<div>ต้นฉบับ: ${result.dimensions.originalWidth} × ${result.dimensions.originalHeight}</div>` : ''}
             <div>✅ ประมวลผลเมื่อ: ${result.processedAt.toLocaleTimeString()}</div>
         </div>
         <div class="image-actions">
-            <button onclick="cropImage('${result.id}')">ครอบตัด</button>
-            <button onclick="downloadImage('${result.id}')">ดาวน์โหลด</button>
-            <button onclick="removeProcessedImage('${result.id}')">ลบ</button>
+            <button onclick="cropImage('${result.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.13 1L6 16a2 2 0 0 0 2 2h15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M1 6.13L16 6a2 2 0 0 1 2 2v15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              ครอบตัด
+            </button>
+            <button onclick="downloadImage('${result.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              ดาวน์โหลด
+            </button>
+            <button onclick="removeProcessedImage('${result.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="3,6 5,6 21,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              ลบ
+            </button>
         </div>
     `;
 
@@ -588,7 +607,7 @@ function updateOriginalImageStatus(imageId, status) {
             } else {
                 statusText = status === 'processing' ? '⏳ กำลังประมวลผล...' :
                     status === 'pending' ? '⏸️ รอดำเนินการ' :
-                    status === 'completed' ? '✅ ลบพื้นหลังแล้ว' : '✅ พร้อม';
+                        status === 'completed' ? '✅ ลบพื้นหลังแล้ว' : '✅ พร้อม';
             }
             statusElement.textContent = statusText;
         }
@@ -624,41 +643,41 @@ function cropImage(imageId) {
     `;
 
     document.body.appendChild(modal);
-    
+
     // Setup crop canvas
     const cropCanvas = modal.querySelector('.crop-canvas');
     const cropSelection = modal.querySelector('.crop-selection');
     const container = modal.querySelector('.crop-canvas-container');
-    
+
     // Set canvas size and draw image
     const maxSize = 400;
     const scale = Math.min(maxSize / result.processedCanvas.width, maxSize / result.processedCanvas.height);
     cropCanvas.width = result.processedCanvas.width * scale;
     cropCanvas.height = result.processedCanvas.height * scale;
-    
+
     const ctx = cropCanvas.getContext('2d');
     ctx.drawImage(result.processedCanvas, 0, 0, cropCanvas.width, cropCanvas.height);
-    
+
     // Initialize crop selection
     let isSelecting = false;
     let startX, startY, currentX, currentY;
-    
+
     function updateSelection() {
         const rect = cropCanvas.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        
+
         const left = Math.min(startX, currentX);
         const top = Math.min(startY, currentY);
         const width = Math.abs(currentX - startX);
         const height = Math.abs(currentY - startY);
-        
+
         cropSelection.style.left = (left + rect.left - containerRect.left) + 'px';
         cropSelection.style.top = (top + rect.top - containerRect.top) + 'px';
         cropSelection.style.width = width + 'px';
         cropSelection.style.height = height + 'px';
         cropSelection.style.display = 'block';
     }
-    
+
     cropCanvas.addEventListener('mousedown', (e) => {
         const rect = cropCanvas.getBoundingClientRect();
         startX = e.clientX - rect.left;
@@ -666,7 +685,7 @@ function cropImage(imageId) {
         isSelecting = true;
         cropSelection.style.display = 'none';
     });
-    
+
     cropCanvas.addEventListener('mousemove', (e) => {
         if (!isSelecting) return;
         const rect = cropCanvas.getBoundingClientRect();
@@ -674,11 +693,11 @@ function cropImage(imageId) {
         currentY = e.clientY - rect.top;
         updateSelection();
     });
-    
+
     cropCanvas.addEventListener('mouseup', () => {
         isSelecting = false;
     });
-    
+
     // Store crop data for later use
     modal.cropData = {
         imageId,
@@ -698,56 +717,56 @@ function closeCropModal() {
 function applyCrop(imageId) {
     const modal = document.querySelector('.crop-modal');
     const cropData = modal.cropData;
-    
+
     if (!cropData) {
         alert('ข้อผิดพลาด: ไม่พบข้อมูลการครอบตัด');
         return;
     }
-    
+
     const selection = cropData.selection;
     const selectionRect = selection.getBoundingClientRect();
     const canvasRect = cropData.canvas.getBoundingClientRect();
-    
+
     // Check if selection exists
-    if (selection.style.display === 'none' || 
-        parseInt(selection.style.width) === 0 || 
+    if (selection.style.display === 'none' ||
+        parseInt(selection.style.width) === 0 ||
         parseInt(selection.style.height) === 0) {
         alert('กรุณาเลือกพื้นที่ที่ต้องการครอบตัด');
         return;
     }
-    
+
     // Calculate crop coordinates relative to canvas
     const containerRect = cropData.canvas.parentElement.getBoundingClientRect();
     const cropX = (parseInt(selection.style.left) - (canvasRect.left - containerRect.left)) / cropData.scale;
     const cropY = (parseInt(selection.style.top) - (canvasRect.top - containerRect.top)) / cropData.scale;
     const cropWidth = parseInt(selection.style.width) / cropData.scale;
     const cropHeight = parseInt(selection.style.height) / cropData.scale;
-    
+
     // Find the original result
     const result = processedImages.find(img => img.id === imageId);
     if (!result) {
         alert('ข้อผิดพลาด: ไม่พบรูปภาพ');
         return;
     }
-    
+
     // Create cropped canvas
     const croppedCanvas = document.createElement('canvas');
     croppedCanvas.width = cropWidth;
     croppedCanvas.height = cropHeight;
     const croppedCtx = croppedCanvas.getContext('2d');
-    
+
     // Draw cropped portion
     croppedCtx.drawImage(
         result.processedCanvas,
         cropX, cropY, cropWidth, cropHeight,
         0, 0, cropWidth, cropHeight
     );
-    
+
     // Update the result with cropped canvas
     result.processedCanvas = croppedCanvas;
     result.dimensions.width = cropWidth;
     result.dimensions.height = cropHeight;
-    
+
     // Update the UI
     const resultElement = processedImagesContainer.querySelector(`[data-id="${imageId}"]`);
     if (resultElement) {
@@ -756,14 +775,14 @@ function applyCrop(imageId) {
         canvas.height = croppedCanvas.height;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(croppedCanvas, 0, 0);
-        
+
         // Update dimensions display
         const dimensionsDiv = resultElement.querySelector('.image-info div:nth-child(2)');
         if (dimensionsDiv) {
             dimensionsDiv.textContent = `ส่งออก: ${Math.round(cropWidth)} × ${Math.round(cropHeight)}`;
         }
     }
-    
+
     closeCropModal();
     alert('ครอบตัดรูปภาพสำเร็จ!');
 }
