@@ -160,6 +160,34 @@ if (uploadSection) {
     uploadSection.addEventListener('drop', handleDrop, false);
 }
 
+// Clipboard paste functionality
+function handlePaste(e) {
+    const items = e.clipboardData.items;
+    
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        
+        if (item.type.indexOf('image') !== -1) {
+            const blob = item.getAsFile();
+            const reader = new FileReader();
+            
+            reader.onload = (e2) => {
+                addToQueue({
+                    url: e2.target.result,
+                    name: `รูปภาพจากคลิปบอร์ด ${Date.now()}.png`,
+                    type: 'paste',
+                    size: blob.size
+                });
+            };
+            
+            reader.readAsDataURL(blob);
+            break;
+        }
+    }
+}
+
+document.addEventListener('paste', handlePaste, false);
+
 // Add safety checks for event listeners
 if (startProcessingBtn) {
     startProcessingBtn.addEventListener('click', () => {
